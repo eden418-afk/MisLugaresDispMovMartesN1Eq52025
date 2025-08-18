@@ -13,6 +13,7 @@ import com.example.mislugares.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
 
+    // holi
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
 
