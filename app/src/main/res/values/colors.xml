@@ -2,4 +2,18 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <!-- Colores base para botones -->
+    <color name="purple_500">#6750F5</color>   <!-- Fondo botón principal -->
+    <color name="purple_200">#CFBCFF</color>   <!-- Ripple botón principal -->
+    <color name="teal_700">#018786</color>     <!-- Fondo/contorno botón alternativo -->
+
+    <color name="btn_primary_bg">@color/purple_500</color>
+    <color name="btn_primary_text">@color/white</color>
+    <!-- 20% de alpha sobre el color, si prefieres efecto ripple más sutil -->
+    <color name="btn_primary_ripple">#336750A4</color>
+
+    <color name="btn_alt_bg">@color/teal_700</color>
+    <color name="btn_alt_text">@color/white</color>
+    <color name="btn_alt_stroke">@color/teal_700</color>
 </resources>
