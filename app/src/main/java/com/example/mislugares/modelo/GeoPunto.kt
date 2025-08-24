@@ -1,4 +1,4 @@
-package com.example.mislugares
+package com.example.mislugares.modelo
 
 import kotlin.math.atan2
 import kotlin.math.cos

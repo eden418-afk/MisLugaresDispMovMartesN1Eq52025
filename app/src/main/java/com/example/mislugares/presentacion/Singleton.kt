@@ -1,7 +1,7 @@
-package com.example.mislugares
+package com.example.mislugares.presentacion
 
 import android.content.Context
-
+import com.example.mislugares.datos.LugaresLista
 
 object Singleton {
     private var _lugares: LugaresLista? = null

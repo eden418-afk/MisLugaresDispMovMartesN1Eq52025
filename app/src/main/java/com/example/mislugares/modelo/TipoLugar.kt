@@ -1,4 +1,4 @@
-package com.example.mislugares
+package com.example.mislugares.modelo
 
 enum class TipoLugar(val texto: String, val recurso: Int) {
     OTROS("Otros", 5),

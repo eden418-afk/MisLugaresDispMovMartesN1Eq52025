@@ -1,4 +1,8 @@
-package com.example.mislugares
+package com.example.mislugares.datos
+
+import com.example.mislugares.modelo.GeoPunto
+import com.example.mislugares.modelo.Lugar
+import com.example.mislugares.modelo.TipoLugar
 
 interface RepositorioLugares {
     fun elemento(id: Int): Lugar          // Devuelve el elemento dado su id

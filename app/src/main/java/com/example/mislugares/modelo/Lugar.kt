@@ -1,4 +1,4 @@
-package com.example.mislugares
+package com.example.mislugares.modelo
 
 
 data class Lugar(

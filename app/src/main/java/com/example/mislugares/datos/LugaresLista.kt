@@ -1,4 +1,6 @@
-package com.example.mislugares
+package com.example.mislugares.datos
+
+import com.example.mislugares.modelo.Lugar
 
 class LugaresLista : RepositorioLugares {
 
