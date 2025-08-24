@@ -21,6 +21,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".AcercaDeActivity"
+            android:label="Acerca de..."
+            android:theme="@style/Theme.AppCompat.Dialog"/>
     </application>
 
 </manifest>

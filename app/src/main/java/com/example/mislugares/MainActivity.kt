@@ -1,5 +1,6 @@
 package com.example.mislugares
 
+import android.content.Intent
 import android.os.Bundle
 import com.google.android.material.snackbar.Snackbar
 import androidx.appcompat.app.AppCompatActivity
@@ -9,6 +10,7 @@ import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import com.example.mislugares.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
@@ -55,5 +57,10 @@ class MainActivity : AppCompatActivity() {
         val navController = findNavController(R.id.nav_host_fragment_content_main)
         return navController.navigateUp(appBarConfiguration)
                 || super.onSupportNavigateUp()
+    }
+
+    fun lanzarAcercaDe(view: View? = null){
+        val i = Intent(this, AcercaDeActivity::class.java)
+        startActivity(i)
     }
 }
