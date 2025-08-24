@@ -6,12 +6,17 @@ import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.example.mislugares.casos_uso.CasosUsoLugar
 import com.example.mislugares.databinding.ActivityMainBinding
+import com.example.mislugares.presentacion.Aplicacion
 import com.google.android.material.snackbar.Snackbar
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
+
+    val lugares by lazy { (application as Aplicacion).lugares }
+    val usoLugar by lazy { CasosUsoLugar(this, lugares) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
