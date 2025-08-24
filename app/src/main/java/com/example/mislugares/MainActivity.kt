@@ -2,20 +2,15 @@ package com.example.mislugares
 
 import android.content.Intent
 import android.os.Bundle
-import com.google.android.material.snackbar.Snackbar
-import androidx.appcompat.app.AppCompatActivity
-import androidx.navigation.findNavController
-import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.navigateUp
-import androidx.navigation.ui.setupActionBarWithNavController
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import com.example.mislugares.databinding.ActivityMainBinding
+import com.google.android.material.snackbar.Snackbar
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -24,47 +19,44 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        // Toolbar
+        setSupportActionBar(binding.toolbar)
+
+        // Listeners de los botones ahora presentes en el layout de la Activity
+        binding.button.setOnClickListener {
+            Toast.makeText(this, "Mostrar Lugares", Toast.LENGTH_SHORT).show()
+        }
+
+        binding.button2.setOnClickListener {
+            Toast.makeText(this, "Preferencias", Toast.LENGTH_SHORT).show()
+        }
+
         binding.button4.setOnClickListener {
             lanzarAcercaDe()
         }
 
-        setSupportActionBar(binding.toolbar)
-
-        val navController = findNavController(R.id.nav_host_fragment_content_main)
-        appBarConfiguration = AppBarConfiguration(navController.graph)
-        setupActionBarWithNavController(navController, appBarConfiguration)
-
-        binding.fab.setOnClickListener { view ->
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                .setAction("Action", null)
-                .setAnchorView(R.id.fab).show()
+        binding.button3.setOnClickListener {
+            finish()
         }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        // Inflate the menu; this adds items to the action bar if it is present.
         menuInflater.inflate(R.menu.menu_main, menu)
         return true
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         return when (item.itemId) {
             R.id.action_settings -> true
+            R.id.acercaDe -> {
+                lanzarAcercaDe()
+                true
+            }
             else -> super.onOptionsItemSelected(item)
         }
     }
 
-    override fun onSupportNavigateUp(): Boolean {
-        val navController = findNavController(R.id.nav_host_fragment_content_main)
-        return navController.navigateUp(appBarConfiguration)
-                || super.onSupportNavigateUp()
-    }
-
-    fun lanzarAcercaDe(view: View? = null){
-        val i = Intent(this, AcercaDeActivity::class.java)
-        startActivity(i)
+    private fun lanzarAcercaDe() {
+        startActivity(Intent(this, AcercaDeActivity::class.java))
     }
 }
