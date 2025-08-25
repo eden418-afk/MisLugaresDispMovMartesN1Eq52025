@@ -59,7 +59,10 @@ class MainActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
-            R.id.action_settings -> true
+            R.id.action_settings -> {
+                lanzarPreferencias()
+                true
+            }
             R.id.acercaDe -> {
                 casosAct.lanzarAcercaDe()
                 true
@@ -85,5 +88,9 @@ class MainActivity : AppCompatActivity() {
             }
             .setNegativeButton("Cancelar", null)
             .show()
+    }
+
+    fun lanzarPreferencias(view: View? =null){
+        casosAct.lanzarPreferencias()
     }
 }
