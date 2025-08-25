@@ -2,6 +2,7 @@ package com.example.mislugares.casos_uso
 
 import android.app.Activity
 import android.content.Intent
+import android.widget.Toast
 import com.example.mislugares.MainActivity
 import com.example.mislugares.VistaLugarActivity
 import com.example.mislugares.datos.RepositorioLugares
@@ -19,7 +20,10 @@ class CasosUsoLugar(
     }
 
     fun borrar(id: Int){
-        lugares.borrar(id)
-        actividad.finish()
+        if (id in 0 until lugares.tamaño()) {
+            lugares.borrar(id)
+            Toast.makeText(actividad, "Lugar eliminado", Toast.LENGTH_SHORT).show()
+            actividad.finish() // cerramos la pantalla actual
+        }
     }
 }

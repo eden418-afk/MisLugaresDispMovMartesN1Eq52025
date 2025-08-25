@@ -3,6 +3,7 @@ package com.example.mislugares
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
@@ -102,11 +103,22 @@ class VistaLugarActivity : AppCompatActivity() {
             R.id.accion_llegar    -> true
             R.id.accion_editar    -> true
             R.id.accion_borrar    -> {
-                usoLugar.borrar(pos)
+                confirmarBorrado()
                 true
             }
             else -> super.onOptionsItemSelected(item)
         }
+    }
+
+    private fun confirmarBorrado() {
+        AlertDialog.Builder(this)
+            .setTitle("Borrado de lugar")
+            .setMessage("¿Estás seguro que quieres eliminar este lugar?")
+            .setNegativeButton("Cancelar", null)
+            .setPositiveButton("Confirmar") { _, _ ->
+                usoLugar.borrar(pos)   // elimina y hace finish()
+            }
+            .show()
     }
 
 }
