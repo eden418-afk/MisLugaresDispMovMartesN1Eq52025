@@ -18,11 +18,15 @@ class MainActivity : AppCompatActivity() {
     val lugares by lazy { (application as Aplicacion).lugares }
     val usoLugar by lazy { CasosUsoLugar(this, lugares) }
 
+    private lateinit var casosAct: com.example.mislugares.casos_uso.CasosUsoActividades
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        casosAct = com.example.mislugares.casos_uso.CasosUsoActividades(this)
 
         // Toolbar
         setSupportActionBar(binding.toolbar)
@@ -37,7 +41,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.button4.setOnClickListener {
-            lanzarAcercaDe()
+            casosAct.lanzarAcercaDe()
         }
 
         binding.button3.setOnClickListener {
@@ -54,14 +58,10 @@ class MainActivity : AppCompatActivity() {
         return when (item.itemId) {
             R.id.action_settings -> true
             R.id.acercaDe -> {
-                lanzarAcercaDe()
+                casosAct.lanzarAcercaDe()
                 true
             }
             else -> super.onOptionsItemSelected(item)
         }
-    }
-
-    private fun lanzarAcercaDe() {
-        startActivity(Intent(this, AcercaDeActivity::class.java))
     }
 }
