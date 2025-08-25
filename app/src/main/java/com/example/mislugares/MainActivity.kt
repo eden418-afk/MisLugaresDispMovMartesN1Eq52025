@@ -5,7 +5,9 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.widget.EditText
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.example.mislugares.casos_uso.CasosUsoLugar
 import com.example.mislugares.databinding.ActivityMainBinding
@@ -70,7 +72,18 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun lanzarVistaLugar(view: View? = null){
-        usoLugar.mostrar(0)
+    fun lanzarVistaLugar(view: View? = null) {
+        val entrada = EditText(this)
+        entrada.setText("0")
+        AlertDialog.Builder(this)
+            .setTitle("Selección de lugar")
+            .setMessage("indica su id:")
+            .setView(entrada)
+            .setPositiveButton("Ok") { dialog, whichButton ->
+                val id = Integer.parseInt(entrada.text.toString())
+                usoLugar.mostrar(id)
+            }
+            .setNegativeButton("Cancelar", null)
+            .show()
     }
 }
