@@ -9,8 +9,11 @@ import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.mislugares.casos_uso.CasosUsoLugar
 import com.example.mislugares.databinding.ActivityMainBinding
+import com.example.mislugares.presentacion.AdaptadorLugares
 import com.example.mislugares.presentacion.Aplicacion
 import com.google.android.material.snackbar.Snackbar
 
@@ -18,7 +21,8 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
 
-    val lugares by lazy { (application as Aplicacion).lugares }
+    private val lugares by lazy { (application as Aplicacion).lugares }
+    private val adaptador by lazy { AdaptadorLugares(lugares) }
     val usoLugar by lazy { CasosUsoLugar(this, lugares) }
 
     private lateinit var casosAct: com.example.mislugares.casos_uso.CasosUsoActividades
@@ -31,25 +35,13 @@ class MainActivity : AppCompatActivity() {
 
         casosAct = com.example.mislugares.casos_uso.CasosUsoActividades(this)
 
+        val recycler: RecyclerView = binding.recyclerView
+        recycler.setHasFixedSize(true)
+        recycler.layoutManager = LinearLayoutManager(this)
+        recycler.adapter = adaptador
+
         // Toolbar
         setSupportActionBar(binding.toolbar)
-
-        // Listeners de los botones ahora presentes en el layout de la Activity
-        binding.button.setOnClickListener {
-            Toast.makeText(this, "Mostrar Lugares", Toast.LENGTH_SHORT).show()
-        }
-
-        binding.button2.setOnClickListener {
-            Toast.makeText(this, "Preferencias", Toast.LENGTH_SHORT).show()
-        }
-
-        binding.button4.setOnClickListener {
-            casosAct.lanzarAcercaDe()
-        }
-
-        binding.button3.setOnClickListener {
-            finish()
-        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
