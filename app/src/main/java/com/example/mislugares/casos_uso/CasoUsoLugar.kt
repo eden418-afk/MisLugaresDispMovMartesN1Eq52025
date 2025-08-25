@@ -3,6 +3,7 @@ package com.example.mislugares.casos_uso
 import android.app.Activity
 import android.content.Intent
 import android.widget.Toast
+import com.example.mislugares.EdicionLugarActivity
 import com.example.mislugares.MainActivity
 import com.example.mislugares.VistaLugarActivity
 import com.example.mislugares.datos.RepositorioLugares
@@ -25,5 +26,11 @@ class CasosUsoLugar(
             Toast.makeText(actividad, "Lugar eliminado", Toast.LENGTH_SHORT).show()
             actividad.finish() // cerramos la pantalla actual
         }
+    }
+
+    fun editar(pos: Int){
+        val i = Intent(actividad, EdicionLugarActivity::class.java)
+        i.putExtra("pos", pos)
+        actividad.startActivity(i)
     }
 }

@@ -36,7 +36,7 @@
             app:layout_constraintTop_toBottomOf="@+id/textView2" />
 
         <Spinner
-            android:id="@+id/direccion"
+            android:id="@+id/tipoLugar"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="16dp"
@@ -52,9 +52,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Tipo:"
-            app:layout_constraintBottom_toBottomOf="@+id/direccion"
+            app:layout_constraintBottom_toBottomOf="@+id/tipoLugar"
             app:layout_constraintStart_toStartOf="@+id/textView2"
-            app:layout_constraintTop_toTopOf="@+id/direccion" />
+            app:layout_constraintTop_toTopOf="@+id/tipoLugar" />
 
         <TextView
             android:id="@+id/textView5"
@@ -93,7 +93,7 @@
             app:layout_constraintTop_toBottomOf="@+id/url" />
 
         <EditText
-            android:id="@+id/editTextText2"
+            android:id="@+id/direccion"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:ems="10"
@@ -114,7 +114,7 @@
             android:textSize="14sp"
             app:layout_constraintEnd_toEndOf="@+id/nombre"
             app:layout_constraintStart_toEndOf="@+id/textView6"
-            app:layout_constraintTop_toBottomOf="@+id/editTextText2" />
+            app:layout_constraintTop_toBottomOf="@+id/direccion" />
 
         <EditText
             android:id="@+id/url"

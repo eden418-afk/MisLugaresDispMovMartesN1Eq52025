@@ -49,10 +49,10 @@ class VistaLugarActivity : AppCompatActivity() {
 
         // Dirección
         if (lugar.direccion.isNullOrBlank()) {
-            direccion.isGone = true
+            tipo.isGone = true
         } else {
-            direccion.isVisible = true
-            direccion.text = lugar.direccion
+            tipo.isVisible = true
+            tipo.text = lugar.direccion
         }
 
         // Teléfono
@@ -101,7 +101,10 @@ class VistaLugarActivity : AppCompatActivity() {
         return when (item.itemId) {
             R.id.accion_compartir -> true
             R.id.accion_llegar    -> true
-            R.id.accion_editar    -> true
+            R.id.accion_editar    -> {
+                usoLugar.editar(pos)
+                true;
+            }
             R.id.accion_borrar    -> {
                 confirmarBorrado()
                 true

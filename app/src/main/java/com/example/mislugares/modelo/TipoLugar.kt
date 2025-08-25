@@ -13,5 +13,11 @@ enum class TipoLugar(val texto: String, val recurso: Int) {
     EDUCACION("Educación", R.drawable.ic_graduate_hat),
     DEPORTE("Deporte", R.drawable.ic_graduate_hat),
     NATURALEZA("Naturaleza", R.drawable.ic_graduate_hat),
-    GASOLINERA("Gasolinera", R.drawable.ic_graduate_hat)
+    GASOLINERA("Gasolinera", R.drawable.ic_graduate_hat);
+
+    companion object {
+        fun getNombres(): Array<String> =
+            values().map { it.texto }.toTypedArray()
+    }
+
 }
