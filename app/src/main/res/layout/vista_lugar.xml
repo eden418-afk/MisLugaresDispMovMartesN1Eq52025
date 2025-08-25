@@ -213,7 +213,8 @@
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:contentDescription="logo cámara"
-                    android:src="@android:drawable/ic_menu_camera" />
+                    android:src="@android:drawable/ic_menu_camera"
+                    android:onClick="hacerFoto"/>
 
                 <ImageView
                     android:id="@+id/galeria"
@@ -223,6 +224,14 @@
                     android:contentDescription="logo galería"
                     android:src="@android:drawable/ic_menu_gallery"
                     android:onClick="ponerDeGaleria"/>
+
+                <ImageView
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:contentDescription="Eliminar foto"
+                    android:onClick="eliminarFoto"
+                    android:src="@android:drawable/ic_menu_close_clear_cancel"
+                    android:visibility="gone"/>
             </LinearLayout>
         </FrameLayout>
 

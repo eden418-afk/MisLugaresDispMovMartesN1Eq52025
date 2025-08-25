@@ -1,6 +1,7 @@
 package com.example.mislugares
 
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -33,7 +34,7 @@ class VistaLugarActivity : AppCompatActivity() {
 
     private lateinit var binding: VistaLugarBinding
 
-    /** 1) Registrar Photo Picker y manejar el resultado */
+    private var uriUlitmaFoto: Uri? = null
     private val pickMedia = registerForActivityResult(
         ActivityResultContracts.PickVisualMedia()
     ) { uri ->
@@ -162,14 +163,23 @@ class VistaLugarActivity : AppCompatActivity() {
             lugar = lugares.elemento(pos)
             actualizaVistas()
         }
+        if (requestCode == RESULTADO_FOTO && resultCode == RESULT_OK) {
+            usoLugar.ponerFoto(pos, usoLugar.uriUltimaFoto?.toString(), binding.foto)
+        }
     }
 
     fun verMapa(view: View) = usoLugar.verMapa(lugar)
     fun llamarTelefono(view: View) = usoLugar.llamarTelefono(lugar)
     fun verPgWeb(view: View) = usoLugar.verPgWeb(lugar)
+
+    fun hacerFoto(view: View) {
+        usoLugar.tomarFoto(RESULTADO_FOTO)
+    }
     private fun seleccionarFotoDesdeGaleria() {
         usoLugar.ponerDeGaleria(pickMedia)
     }
+
+    fun eliminarFoto(view: View) = usoLugar.ponerFoto(pos,"", binding.foto)
 
     /** Copia el contenido de [src] a filesDir y devuelve su Uri local (file://). */
     private fun copiarAAlmacenPrivado(src: android.net.Uri): android.net.Uri? {

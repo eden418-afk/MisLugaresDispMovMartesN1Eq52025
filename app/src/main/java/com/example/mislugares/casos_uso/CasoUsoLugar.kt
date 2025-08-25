@@ -3,23 +3,32 @@ package com.example.mislugares.casos_uso
 import android.app.Activity
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
+import android.os.Environment
+import android.provider.MediaStore
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.FileProvider
 import com.example.mislugares.EdicionLugarActivity
 import com.example.mislugares.MainActivity
 import com.example.mislugares.VistaLugarActivity
 import com.example.mislugares.datos.RepositorioLugares
 import com.example.mislugares.modelo.GeoPunto
 import com.example.mislugares.modelo.Lugar
+import java.io.File
+import java.io.IOException
 import kotlin.jvm.java
 
 class CasosUsoLugar(
     val actividad: Activity,
     val lugares: RepositorioLugares
 ) {
+
+    var uriUltimaFoto: Uri? = null
+
     // OPERACIONES BÁSICAS
     fun mostrar(pos: Int) {
         val i = Intent(actividad, VistaLugarActivity::class.java)
@@ -92,6 +101,34 @@ class CasosUsoLugar(
             imageView.setImageURI(Uri.parse(u))
         } else {
             imageView.setImageDrawable(null)   // o un placeholder si prefieres
+        }
+    }
+
+    /** Abrir la cámara y guardar la foto en el almacenamiento privado de la app. */
+    fun tomarFoto(codigoSolicitud: Int): Uri? {
+        return try {
+            val file = File.createTempFile(
+                "img_${System.currentTimeMillis() / 1000}", ".jpg",
+                actividad.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+            )
+            uriUltimaFoto =
+                if (Build.VERSION.SDK_INT >= 24)
+                    FileProvider.getUriForFile(
+                        actividad,
+                        "${actividad.packageName}.fileprovider",   // <= authority
+                        file
+                    )
+                else Uri.fromFile(file)
+
+            val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE).apply {
+                putExtra(MediaStore.EXTRA_OUTPUT, uriUltimaFoto)
+                addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION or Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            }
+            actividad.startActivityForResult(intent, codigoSolicitud)
+            uriUltimaFoto
+        } catch (ex: IOException) {
+            Toast.makeText(actividad, "Error al crear fichero de imagen", Toast.LENGTH_LONG).show()
+            null
         }
     }
 }
