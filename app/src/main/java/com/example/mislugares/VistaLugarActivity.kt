@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isGone
@@ -101,8 +102,14 @@ class VistaLugarActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
-            R.id.accion_compartir -> true
-            R.id.accion_llegar    -> true
+            R.id.accion_compartir -> {
+                usoLugar.compartir(lugar)
+                true
+            }
+            R.id.accion_llegar    -> {
+                usoLugar.verMapa(lugar)
+                true
+            }
             R.id.accion_editar    -> {
                 usoLugar.editar(pos, RESULTADO_EDITAR)
                 true;
@@ -133,5 +140,9 @@ class VistaLugarActivity : AppCompatActivity() {
             actualizaVistas()
         }
     }
+
+    fun verMapa(view: View) = usoLugar.verMapa(lugar)
+    fun llamarTelefono(view: View) = usoLugar.llamarTelefono(lugar)
+    fun verPgWeb(view: View) = usoLugar.verPgWeb(lugar)
 
 }

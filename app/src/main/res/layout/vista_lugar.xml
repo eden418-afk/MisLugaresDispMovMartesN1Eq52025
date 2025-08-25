@@ -33,7 +33,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:paddingBottom="8dp">
+            android:paddingBottom="8dp"
+            android:onClick="verMapa">
 
             <ImageView
                 android:id="@+id/logo_tipo"
@@ -78,7 +79,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:paddingBottom="6dp">
+            android:paddingBottom="6dp"
+            android:onClick="llamarTelefono">
 
             <ImageView
                 android:layout_width="24dp"
@@ -99,7 +101,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:paddingBottom="6dp">
+            android:paddingBottom="6dp"
+            android:onClick="verPgWeb">
 
             <ImageView
                 android:layout_width="24dp"
