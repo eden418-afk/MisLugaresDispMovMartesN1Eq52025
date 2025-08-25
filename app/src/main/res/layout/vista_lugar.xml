@@ -230,8 +230,7 @@
                     android:layout_height="40dp"
                     android:contentDescription="Eliminar foto"
                     android:onClick="eliminarFoto"
-                    android:src="@android:drawable/ic_menu_close_clear_cancel"
-                    android:visibility="gone"/>
+                    android:src="@android:drawable/ic_menu_close_clear_cancel"/>
             </LinearLayout>
         </FrameLayout>
 
