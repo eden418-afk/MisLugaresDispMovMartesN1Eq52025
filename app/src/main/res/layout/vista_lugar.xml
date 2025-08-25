@@ -10,6 +10,14 @@
         android:orientation="vertical"
         android:padding="12dp">
 
+        <!-- BARRA SUPERIOR -->
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"/>
+
         <!-- Título -->
         <TextView
             android:id="@+id/nombre"

@@ -1,6 +1,8 @@
 package com.example.mislugares
 
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
@@ -25,6 +27,8 @@ class VistaLugarActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = VistaLugarBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        setSupportActionBar(binding.toolbar)
 
         pos = intent.extras?.getInt("pos", 0) ?: 0
         lugar = lugares.elemento(pos)
@@ -86,4 +90,23 @@ class VistaLugarActivity : AppCompatActivity() {
             hora.text = DateFormat.getTimeInstance().format(d)
         }
     }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.vista_lugar, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.accion_compartir -> true
+            R.id.accion_llegar    -> true
+            R.id.accion_editar    -> true
+            R.id.accion_borrar    -> {
+                usoLugar.borrar(pos)
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+
 }
