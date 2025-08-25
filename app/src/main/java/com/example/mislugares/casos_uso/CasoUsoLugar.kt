@@ -7,6 +7,7 @@ import com.example.mislugares.EdicionLugarActivity
 import com.example.mislugares.MainActivity
 import com.example.mislugares.VistaLugarActivity
 import com.example.mislugares.datos.RepositorioLugares
+import com.example.mislugares.modelo.Lugar
 import kotlin.jvm.java
 
 class CasosUsoLugar(
@@ -32,5 +33,9 @@ class CasosUsoLugar(
         val i = Intent(actividad, EdicionLugarActivity::class.java)
         i.putExtra("pos", pos)
         actividad.startActivity(i)
+    }
+
+    fun guardar(id: Int, nuevoLugar: Lugar){
+        lugares.actualiza(id, nuevoLugar);
     }
 }
