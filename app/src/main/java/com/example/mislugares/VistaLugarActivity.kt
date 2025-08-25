@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.widget.Toast
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
@@ -179,7 +180,33 @@ class VistaLugarActivity : AppCompatActivity() {
         usoLugar.ponerDeGaleria(pickMedia)
     }
 
-    fun eliminarFoto(view: View) = usoLugar.ponerFoto(pos,"", binding.foto)
+    fun eliminarFoto(view: View? = null) {
+        val uriActual = lugar.foto
+        if (uriActual.isNullOrEmpty()) {
+            Toast.makeText(this, "Este lugar no tiene fotografía", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        AlertDialog.Builder(this)
+            .setTitle("Eliminar fotografía")
+            .setMessage("¿Quieres eliminar la fotografía de \"${lugar.nombre}\"?")
+            .setNegativeButton("Cancelar", null)
+            .setPositiveButton("Eliminar") { _, _ ->
+                // (Opcional) Borra el fichero local si era file://
+                runCatching {
+                    val u = Uri.parse(uriActual)
+                    if (u.scheme == "file") {
+                        u.path?.let { File(it).delete() }
+                    } else {
+                        // Mejor esfuerzo cuando es content:// (puede no hacer nada con FileProvider)
+                        contentResolver.delete(u, null, null)
+                    }
+                }
+                // Limpia el modelo y refresca la vista
+                usoLugar.ponerFoto(pos, "", binding.foto)
+            }
+            .show()
+    }
 
     /** Copia el contenido de [src] a filesDir y devuelve su Uri local (file://). */
     private fun copiarAAlmacenPrivado(src: android.net.Uri): android.net.Uri? {
