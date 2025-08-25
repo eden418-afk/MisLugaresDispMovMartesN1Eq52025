@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.mislugares.casos_uso.CasosUsoLugar
@@ -61,7 +62,15 @@ class MainActivity : AppCompatActivity() {
                 casosAct.lanzarAcercaDe()
                 true
             }
+            R.id.menu_buscar -> {
+                lanzarVistaLugar()
+                true;
+            }
             else -> super.onOptionsItemSelected(item)
         }
+    }
+
+    fun lanzarVistaLugar(view: View? = null){
+        usoLugar.mostrar(0)
     }
 }
