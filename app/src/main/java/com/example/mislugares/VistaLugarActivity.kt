@@ -5,6 +5,8 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isGone
@@ -13,11 +15,15 @@ import com.example.mislugares.casos_uso.CasosUsoLugar
 import com.example.mislugares.databinding.VistaLugarBinding
 import com.example.mislugares.modelo.Lugar
 import com.example.mislugares.presentacion.Aplicacion
+import java.io.File
+import java.io.FileOutputStream
 import java.text.DateFormat
 import java.util.Date
 
 class VistaLugarActivity : AppCompatActivity() {
     val RESULTADO_EDITAR = 1
+    val RESULTADO_GALERIA = 2
+    val RESULTADO_FOTO = 3
 
     private val lugares by lazy { (application as Aplicacion).lugares }
     private val usoLugar by lazy { CasosUsoLugar(this, lugares) }
@@ -26,6 +32,19 @@ class VistaLugarActivity : AppCompatActivity() {
     private lateinit var lugar: Lugar
 
     private lateinit var binding: VistaLugarBinding
+
+    /** 1) Registrar Photo Picker y manejar el resultado */
+    private val pickMedia = registerForActivityResult(
+        ActivityResultContracts.PickVisualMedia()
+    ) { uri ->
+        if (uri != null) {
+            // 1) Copiamos la imagen a almacenamiento privado de la app
+            val localUri = copiarAAlmacenPrivado(uri)
+
+            // 2) Guardamos en el repositorio y mostramos en pantalla
+            usoLugar.ponerFoto(pos, localUri?.toString(), binding.foto)
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,6 +55,8 @@ class VistaLugarActivity : AppCompatActivity() {
 
         pos = intent.extras?.getInt("pos", 0) ?: 0
         lugar = lugares.elemento(pos)
+
+        binding.galeria.setOnClickListener { seleccionarFotoDesdeGaleria() }
 
         actualizaVistas()
     }
@@ -93,6 +114,8 @@ class VistaLugarActivity : AppCompatActivity() {
             fecha.text = DateFormat.getDateInstance().format(d)
             hora.text = DateFormat.getTimeInstance().format(d)
         }
+
+        usoLugar.visualizarFoto(lugar, foto)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -144,5 +167,27 @@ class VistaLugarActivity : AppCompatActivity() {
     fun verMapa(view: View) = usoLugar.verMapa(lugar)
     fun llamarTelefono(view: View) = usoLugar.llamarTelefono(lugar)
     fun verPgWeb(view: View) = usoLugar.verPgWeb(lugar)
+    private fun seleccionarFotoDesdeGaleria() {
+        usoLugar.ponerDeGaleria(pickMedia)
+    }
+
+    /** Copia el contenido de [src] a filesDir y devuelve su Uri local (file://). */
+    private fun copiarAAlmacenPrivado(src: android.net.Uri): android.net.Uri? {
+        return try {
+            val nombre = "foto_${System.currentTimeMillis()}.jpg"
+            val destino = File(filesDir, nombre)
+
+            contentResolver.openInputStream(src).use { input ->
+                FileOutputStream(destino).use { output ->
+                    if (input != null) input.copyTo(output)
+                }
+            }
+            // Para uso interno basta file://; si quisieras compartirlo con otras apps, usa FileProvider
+            android.net.Uri.fromFile(destino)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
+    }
 
 }

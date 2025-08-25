@@ -3,7 +3,11 @@ package com.example.mislugares.casos_uso
 import android.app.Activity
 import android.content.Intent
 import android.net.Uri
+import android.widget.ImageView
 import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import com.example.mislugares.EdicionLugarActivity
 import com.example.mislugares.MainActivity
 import com.example.mislugares.VistaLugarActivity
@@ -65,5 +69,29 @@ class CasosUsoLugar(
         else
             Uri.parse("geo:0,0?q=${lugar.direccion}")
         actividad.startActivity(Intent(Intent.ACTION_VIEW, uri))
+    }
+
+    fun ponerDeGaleria(launcher: ActivityResultLauncher<PickVisualMediaRequest>) {
+        launcher.launch(
+            PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+        )
+    }
+
+    /** Guarda la URI de la foto en el lugar y (opcional) la pinta en el ImageView. */
+    fun ponerFoto(pos: Int, uri: String?, imageView: ImageView? = null) {
+        val lugar = lugares.elemento(pos)
+        lugar.foto = uri ?: ""
+        lugares.actualiza(pos, lugar)          // << persiste en tu repositorio (memoria/BD)
+        imageView?.let { visualizarFoto(lugar, it) }
+    }
+
+    /** Muestra la foto del lugar (si hay), o limpia el ImageView. */
+    fun visualizarFoto(lugar: Lugar, imageView: ImageView) {
+        val u = lugar.foto
+        if (!u.isNullOrEmpty()) {
+            imageView.setImageURI(Uri.parse(u))
+        } else {
+            imageView.setImageDrawable(null)   // o un placeholder si prefieres
+        }
     }
 }
