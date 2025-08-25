@@ -2,6 +2,8 @@ package com.example.mislugares
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isGone
+import androidx.core.view.isVisible
 import com.example.mislugares.casos_uso.CasosUsoLugar
 import com.example.mislugares.databinding.VistaLugarBinding
 import com.example.mislugares.modelo.Lugar
@@ -11,7 +13,6 @@ import java.util.Date
 
 class VistaLugarActivity : AppCompatActivity() {
 
-    // Repo y casos de uso (usando el singleton que hicimos)
     private val lugares by lazy { (application as Aplicacion).lugares }
     private val usoLugar by lazy { CasosUsoLugar(this, lugares) }
 
@@ -32,18 +33,57 @@ class VistaLugarActivity : AppCompatActivity() {
     }
 
     private fun actualizaVistas() = with(binding) {
+        // Siempre visibles
         nombre.text = lugar.nombre
         logoTipo.setImageResource(lugar.tipoLugar.recurso)
         tipo.text = lugar.tipoLugar.texto
-        direccion.text = lugar.direccion
-        telefono.text = lugar.telefono.toString()
-        url.text = lugar.url
-        comentario.text = lugar.comentarios
-        fecha.text = DateFormat.getDateInstance().format(Date(lugar.fecha))
-        hora.text = DateFormat.getTimeInstance().format(Date(lugar.fecha))
         valoracion.rating = lugar.valoracion
         valoracion.setOnRatingBarChangeListener { _, valor, _ ->
             lugar.valoracion = valor
+        }
+
+        // Dirección
+        if (lugar.direccion.isNullOrBlank()) {
+            direccion.isGone = true
+        } else {
+            direccion.isVisible = true
+            direccion.text = lugar.direccion
+        }
+
+        // Teléfono
+        if (lugar.telefono == 0) {
+            telefono.isGone = true
+        } else {
+            telefono.isVisible = true
+            telefono.text = lugar.telefono.toString()
+        }
+
+        // URL
+        if (lugar.url.isNullOrBlank()) {
+            url.isGone = true
+        } else {
+            url.isVisible = true
+            url.text = lugar.url
+        }
+
+        // Comentario
+        if (lugar.comentarios.isNullOrBlank()) {
+            comentario.isGone = true
+        } else {
+            comentario.isVisible = true
+            comentario.text = lugar.comentarios
+        }
+
+        // Fecha y hora
+        if (lugar.fecha == 0L) {
+            fecha.isGone = true
+            hora.isGone = true
+        } else {
+            val d = Date(lugar.fecha)
+            fecha.isVisible = true
+            hora.isVisible = true
+            fecha.text = DateFormat.getDateInstance().format(d)
+            hora.text = DateFormat.getTimeInstance().format(d)
         }
     }
 }

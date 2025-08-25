@@ -30,13 +30,13 @@ interface RepositorioLugares {
         añade(
             Lugar(
                 nombre = "Al de siempre",
-                direccion = "P.Industrial Junto Molí Nou - 46722, Benifla (Valencia)",
+                direccion = "",
                 posicion = GeoPunto(-0.190642, 38.925857),
                 tipoLugar = TipoLugar.BAR,
                 foto = "",
-                telefono = 636472405,
+                telefono = 0,
                 url = "",
-                comentarios = "No te pierdas el arroz en calabaza.",
+                comentarios = "",
                 valoracion = 3f
             )
         )
