@@ -2,7 +2,7 @@ package com.example.mislugares
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import com.example.mislugares.presentacion.PreferenciasFragment
+import com.example.asteroides.presentacion.PreferenciasFragment
 
 class PreferenciasActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

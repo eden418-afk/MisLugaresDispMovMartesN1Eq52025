@@ -1,4 +1,4 @@
-package com.example.mislugares.presentacion
+package com.example.asteroides.presentacion
 
 import android.os.Bundle
 import android.widget.Toast
@@ -11,20 +11,17 @@ class PreferenciasFragment : PreferenceFragmentCompat() {
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.preferencias, rootKey)
 
-        // Preferencia "maximo" (EditTextPreference)
-        val fragmentos = findPreference<EditTextPreference>("maximo")
+        val maximo = findPreference<EditTextPreference>("maximo")
 
-        fragmentos?.setOnPreferenceChangeListener { preference, newValue ->
-            // newValue llega como String
+        // 1) Validación y actualización del summary cuando el usuario cambia el valor
+        maximo?.setOnPreferenceChangeListener { pref, newValue ->
             val valor = (newValue as? String)?.toIntOrNull()
             if (valor == null) {
                 Toast.makeText(requireContext(), "Ha de ser un número", Toast.LENGTH_SHORT).show()
                 return@setOnPreferenceChangeListener false
             }
-
             if (valor in 0..99) {
-                // Actualiza el summary mostrando el valor
-                preference.summary = "Limita el número de valores que se muestran ($valor)"
+                pref.summary = "Limita el número de valores que se muestran ($valor)"
                 true
             } else {
                 Toast.makeText(requireContext(), "Valor máximo 99", Toast.LENGTH_SHORT).show()
@@ -32,9 +29,23 @@ class PreferenciasFragment : PreferenceFragmentCompat() {
             }
         }
 
-        // Inicializa el summary con el valor actual al abrir la pantalla
-        fragmentos?.text?.toIntOrNull()?.let { v ->
-            fragmentos.summary = "Limita el número de valores que se muestran ($v)"
+        // 2) Inicializar el summary con el valor ya guardado (cuando abrimos la pantalla)
+        actualizarSummaryMaximo()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        // Reafirma el summary si el fragmento se recrea (por ejemplo, rotación)
+        actualizarSummaryMaximo()
+    }
+
+    private fun actualizarSummaryMaximo() {
+        val maximo = findPreference<EditTextPreference>("maximo") ?: return
+        val valor = maximo.text?.toIntOrNull()
+        if (valor != null) {
+            maximo.summary = "Limita el número de valores que se muestran ($valor)"
+        } else {
+            maximo.summary = "Limita el número de valores que se muestran"
         }
     }
 }
