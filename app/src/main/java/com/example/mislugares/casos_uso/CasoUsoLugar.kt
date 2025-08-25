@@ -29,10 +29,10 @@ class CasosUsoLugar(
         }
     }
 
-    fun editar(pos: Int){
+    fun editar(pos: Int, codigoSolicitud: Int){
         val i = Intent(actividad, EdicionLugarActivity::class.java)
         i.putExtra("pos", pos)
-        actividad.startActivity(i)
+        actividad.startActivityForResult(i, codigoSolicitud)
     }
 
     fun guardar(id: Int, nuevoLugar: Lugar){

@@ -1,5 +1,6 @@
 package com.example.mislugares
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -15,6 +16,7 @@ import java.text.DateFormat
 import java.util.Date
 
 class VistaLugarActivity : AppCompatActivity() {
+    val RESULTADO_EDITAR = 1
 
     private val lugares by lazy { (application as Aplicacion).lugares }
     private val usoLugar by lazy { CasosUsoLugar(this, lugares) }
@@ -102,7 +104,7 @@ class VistaLugarActivity : AppCompatActivity() {
             R.id.accion_compartir -> true
             R.id.accion_llegar    -> true
             R.id.accion_editar    -> {
-                usoLugar.editar(pos)
+                usoLugar.editar(pos, RESULTADO_EDITAR)
                 true;
             }
             R.id.accion_borrar    -> {
@@ -122,6 +124,14 @@ class VistaLugarActivity : AppCompatActivity() {
                 usoLugar.borrar(pos)   // elimina y hace finish()
             }
             .show()
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == RESULTADO_EDITAR && resultCode == RESULT_OK) {
+            lugar = lugares.elemento(pos)
+            actualizaVistas()
+        }
     }
 
 }

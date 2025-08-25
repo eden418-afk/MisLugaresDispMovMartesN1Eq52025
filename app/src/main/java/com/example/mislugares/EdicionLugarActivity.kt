@@ -84,6 +84,7 @@ class EdicionLugarActivity : AppCompatActivity() {
             valoracion = lugar.valoracion
         )
         usoLugar.guardar(pos, nuevoLugar)
+        setResult(RESULT_OK)
         finish()
     }
 }
