@@ -14,6 +14,9 @@ import com.example.mislugares.modelo.Lugar
 class AdaptadorLugares(private val lugares: RepositorioLugares)
     : RecyclerView.Adapter<AdaptadorLugares.ViewHolder>() {
 
+    /** Se establece desde la Activity */
+    var onItemClick: ((Int) -> Unit)? = null
+
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val nombre: TextView = itemView.findViewById(R.id.nombre)
         private val direccion: TextView = itemView.findViewById(R.id.direccion)
@@ -32,12 +35,17 @@ class AdaptadorLugares(private val lugares: RepositorioLugares)
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val v = LayoutInflater.from(parent.context)
             .inflate(R.layout.elemento_lista, parent, false)
-        return ViewHolder(v)
+        val holder = ViewHolder(v)
+        // Click en la fila -> devolvemos la posición al callback
+        v.setOnClickListener {
+            val pos = holder.bindingAdapterPosition
+            if (pos != RecyclerView.NO_POSITION) onItemClick?.invoke(pos)
+        }
+        return holder
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val lugar = lugares.elemento(position)
-        holder.bind(lugar)
+        holder.bind(lugares.elemento(position))
     }
 
     override fun getItemCount(): Int = lugares.tamaño()

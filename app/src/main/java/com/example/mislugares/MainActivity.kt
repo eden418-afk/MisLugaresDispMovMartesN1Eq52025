@@ -40,6 +40,12 @@ class MainActivity : AppCompatActivity() {
         recycler.layoutManager = LinearLayoutManager(this)
         recycler.adapter = adaptador
 
+        adaptador.onItemClick = { pos ->
+            // Abre la pantalla de detalle del lugar seleccionado
+            usoLugar.mostrar(pos)
+            // (equivalente a crear un Intent y pasar "pos")
+        }
+
         // Toolbar
         setSupportActionBar(binding.toolbar)
     }
