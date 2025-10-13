@@ -23,4 +23,10 @@
         android:orderInCategory="115"
         app:showAsAction="always|collapseActionView" />
 
+    <item
+        android:id="@+id/menu_mapa"
+        android:title="Mapa"
+        android:icon="@android:drawable/ic_menu_mylocation"
+        app:showAsAction="always" />
+
 </menu>

@@ -20,6 +20,11 @@
         android:roundIcon="@mipmap/ic_mi_icono_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.MisLugares">
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="@string/google_maps_key" />
+
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -39,6 +44,9 @@
             android:label="Edicion de lugar"/>
         <activity android:name=".PreferenciasActivity"
             android:label="Preferencias"/>
+        <activity
+            android:name=".presentacion.MapaActivity"
+            android:screenOrientation="portrait" />
 
         <provider
             android:name="androidx.core.content.FileProvider"

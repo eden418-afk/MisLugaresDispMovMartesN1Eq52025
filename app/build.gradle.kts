@@ -52,4 +52,5 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
     implementation(libs.androidx.preference)
     implementation(libs.androidx.recyclerview)
+    implementation("com.google.android.gms:play-services-maps:18.2.0")
 }

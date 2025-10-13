@@ -17,6 +17,7 @@ import com.example.mislugares.casos_uso.CasosUsoLugar
 import com.example.mislugares.databinding.ActivityMainBinding
 import com.example.mislugares.presentacion.AdaptadorLugares
 import com.example.mislugares.presentacion.Aplicacion
+import com.example.mislugares.presentacion.MapaActivity
 import com.google.android.material.snackbar.Snackbar
 
 private const val SOLICITUD_PERMISO_LOCALIZACION = 1
@@ -80,6 +81,10 @@ class MainActivity : AppCompatActivity() {
             R.id.menu_buscar -> {
                 lanzarVistaLugar()
                 true;
+            }
+            R.id.menu_mapa -> {
+                startActivity(Intent(this, MapaActivity::class.java))
+                true
             }
             else -> super.onOptionsItemSelected(item)
         }
