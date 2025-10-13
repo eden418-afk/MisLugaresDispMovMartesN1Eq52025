@@ -1,11 +1,13 @@
 package com.example.mislugares.presentacion
 
+import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import com.example.mislugares.R
+import com.example.mislugares.VistaLugarActivity
 import com.example.mislugares.modelo.GeoPunto
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -13,9 +15,10 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 
-class MapaActivity : AppCompatActivity(), OnMapReadyCallback {
+class MapaActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnInfoWindowClickListener {
 
     private lateinit var mapa: GoogleMap
     private val lugares by lazy { (application as Aplicacion).lugares }
@@ -32,6 +35,7 @@ class MapaActivity : AppCompatActivity(), OnMapReadyCallback {
         // opcional: título en la app bar
         supportActionBar?.title = getString(R.string.app_name)
     }
+
 
     override fun onMapReady(googleMap: GoogleMap) {
         mapa = googleMap
@@ -63,22 +67,33 @@ class MapaActivity : AppCompatActivity(), OnMapReadyCallback {
         // 2) Añade un marcador por cada lugar, usando su icono escalado
         for (i in 0 until lugares.tamaño()) {
             val lugar = lugares.elemento(i)
-            val pos = lugar.posicion
-            if (pos == GeoPunto.SIN_POSICION) continue
+            val p = lugar.posicion
+            if (p != null && p.latitud != 0.0) {
+                val grande = BitmapFactory.decodeResource(resources, lugar.tipoLugar.recurso)
+                val icono = Bitmap.createScaledBitmap(grande, grande.width / 7, grande.height / 7, false)
 
-            // Carga el drawable del tipo de lugar y escálalo (1/7 del tamaño original)
-            val grande = BitmapFactory.decodeResource(resources, lugar.tipoLugar.recurso)
-            val icono: Bitmap = Bitmap.createScaledBitmap(
-                grande, grande.width / 7, grande.height / 7, false
-            )
+                val marker = mapa.addMarker(
+                    MarkerOptions()
+                        .position(LatLng(p.latitud, p.longitud))
+                        .title(lugar.nombre)
+                        .snippet(lugar.direccion)
+                        .icon(BitmapDescriptorFactory.fromBitmap(icono))
+                )
+                marker?.tag = i           // ← guarda la posición del lugar
+            }
+        }
 
-            mapa.addMarker(
-                MarkerOptions()
-                    .position(LatLng(pos.latitud, pos.longitud))
-                    .title(lugar.nombre)
-                    .snippet(lugar.direccion)
-                    .icon(BitmapDescriptorFactory.fromBitmap(icono))
-            )
+        mapa.setOnInfoWindowClickListener(this)
+    }
+
+    override fun onInfoWindowClick(marker: Marker) {
+        for (pos in 0 until lugares.tamaño()) {
+            if (lugares.elemento(pos).nombre == marker.title) {
+                val intent = Intent(this, VistaLugarActivity::class.java)
+                intent.putExtra("pos", pos)
+                startActivity(intent)
+                break
+            }
         }
     }
 }
