@@ -1,6 +1,8 @@
 package com.example.mislugares
 
+import android.app.Activity
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.view.Menu
@@ -11,6 +13,7 @@ import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import com.example.mislugares.casos_uso.CasosUsoLugar
@@ -21,6 +24,8 @@ import java.io.File
 import java.io.FileOutputStream
 import java.text.DateFormat
 import java.util.Date
+
+private const val REQ_LLAMADA = 200
 
 class VistaLugarActivity : AppCompatActivity() {
     val RESULTADO_EDITAR = 1
@@ -158,6 +163,27 @@ class VistaLugarActivity : AppCompatActivity() {
             .show()
     }
 
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+
+        if (requestCode == REQ_LLAMADA) {
+            if (grantResults.size == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                usoLugar.llamarTelefono(lugar)
+            } else {
+                Toast.makeText(
+                    this,
+                    "Sin el permiso no puedo realizar la llamada directa.",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
+    }
+
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == RESULTADO_EDITAR && resultCode == RESULT_OK) {
@@ -170,7 +196,48 @@ class VistaLugarActivity : AppCompatActivity() {
     }
 
     fun verMapa(view: View) = usoLugar.verMapa(lugar)
-    fun llamarTelefono(view: View) = usoLugar.llamarTelefono(lugar)
+    fun llamarTelefono(view: View) {
+        if (lugar.telefono == 0) {
+            Toast.makeText(this, "Este lugar no tiene teléfono", Toast.LENGTH_SHORT).show()
+            return
+        }
+        // ¿Tenemos permiso?
+        val granted = ActivityCompat.checkSelfPermission(
+            this, android.Manifest.permission.CALL_PHONE
+        ) == PackageManager.PERMISSION_GRANTED
+
+        if (granted) {
+            usoLugar.llamarTelefono(lugar)   // ejecuta ACTION_CALL
+        } else {
+            solicitarPermiso(
+                permiso = android.Manifest.permission.CALL_PHONE,
+                justificacion = "Para llamar directamente necesito el permiso de teléfono.",
+                requestCode = REQ_LLAMADA,
+                actividad = this
+            )
+        }
+    }
+
+    private fun solicitarPermiso(
+        permiso: String,
+        justificacion: String,
+        requestCode: Int,
+        actividad: Activity
+    ) {
+        if (ActivityCompat.shouldShowRequestPermissionRationale(actividad, permiso)) {
+            AlertDialog.Builder(actividad)
+                .setTitle("Solicitud de permiso")
+                .setMessage(justificacion)
+                .setPositiveButton("OK") { _, _ ->
+                    ActivityCompat.requestPermissions(actividad, arrayOf(permiso), requestCode)
+                }
+                .show()
+        } else {
+            ActivityCompat.requestPermissions(actividad, arrayOf(permiso), requestCode)
+        }
+    }
+
+
     fun verPgWeb(view: View) = usoLugar.verPgWeb(lugar)
 
     fun hacerFoto(view: View) {

@@ -62,9 +62,12 @@ class CasosUsoLugar(
         }
     )
 
-    fun llamarTelefono(lugar: Lugar) = actividad.startActivity(
-        Intent(Intent.ACTION_DIAL, Uri.parse("tel:${lugar.telefono}"))
-    )
+    fun llamarTelefono(lugar: Lugar) {
+        if (lugar.telefono == 0) return
+        val uri = Uri.parse("tel:${lugar.telefono}")
+        val i = Intent(Intent.ACTION_CALL, uri) // antes: ACTION_DIAL
+        actividad.startActivity(i)
+    }
 
     fun verPgWeb(lugar: Lugar) = actividad.startActivity(
         Intent(Intent.ACTION_VIEW, Uri.parse(lugar.url))
