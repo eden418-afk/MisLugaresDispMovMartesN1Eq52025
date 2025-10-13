@@ -1,6 +1,7 @@
 package com.example.mislugares
 
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -11,11 +12,14 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.mislugares.casos_uso.CasosUsoLocalizacion
 import com.example.mislugares.casos_uso.CasosUsoLugar
 import com.example.mislugares.databinding.ActivityMainBinding
 import com.example.mislugares.presentacion.AdaptadorLugares
 import com.example.mislugares.presentacion.Aplicacion
 import com.google.android.material.snackbar.Snackbar
+
+private const val SOLICITUD_PERMISO_LOCALIZACION = 1
 
 class MainActivity : AppCompatActivity() {
 
@@ -27,6 +31,9 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var casosAct: com.example.mislugares.casos_uso.CasosUsoActividades
 
+    private lateinit var usoLocalizacion: CasosUsoLocalizacion
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -34,6 +41,11 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         casosAct = com.example.mislugares.casos_uso.CasosUsoActividades(this)
+        usoLocalizacion = CasosUsoLocalizacion(
+            actividad = this,
+            codigoPermiso = SOLICITUD_PERMISO_LOCALIZACION,
+            adaptador = adaptador
+        )
 
         val recycler: RecyclerView = binding.recyclerView
         recycler.setHasFixedSize(true)
@@ -90,5 +102,27 @@ class MainActivity : AppCompatActivity() {
 
     fun lanzarPreferencias(view: View? =null){
         casosAct.lanzarPreferencias()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        usoLocalizacion.activar()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        usoLocalizacion.desactivar()
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int, permissions: Array<out String>, grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == SOLICITUD_PERMISO_LOCALIZACION &&
+            grantResults.size == 1 &&
+            grantResults[0] == PackageManager.PERMISSION_GRANTED
+        ) {
+            usoLocalizacion.permisoConcedido()
+        }
     }
 }
