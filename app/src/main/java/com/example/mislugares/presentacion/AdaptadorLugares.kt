@@ -1,5 +1,6 @@
 package com.example.mislugares.presentacion
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,11 +13,12 @@ import com.example.mislugares.datos.RepositorioLugares
 import com.example.mislugares.modelo.GeoPunto
 import com.example.mislugares.modelo.Lugar
 
-class AdaptadorLugares(private val lugares: RepositorioLugares)
+open class AdaptadorLugares(open val contexto: Context, open val lugares: RepositorioLugares)
     : RecyclerView.Adapter<AdaptadorLugares.ViewHolder>() {
 
     /** Se establece desde la Activity */
     var onItemClick: ((Int) -> Unit)? = null
+    var onClick: (View) -> Unit = {}
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val nombre: TextView = itemView.findViewById(R.id.nombre)
@@ -56,8 +58,8 @@ class AdaptadorLugares(private val lugares: RepositorioLugares)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind(lugares.elemento(position))
+        holder.bind(lugares.elemento(posicion = position, contexto = contexto))
     }
 
-    override fun getItemCount(): Int = lugares.tamaño()
+    override fun getItemCount(): Int = lugares.tamaño(contexto = contexto)
 }

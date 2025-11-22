@@ -15,25 +15,26 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.mislugares.casos_uso.CasosUsoLocalizacion
 import com.example.mislugares.casos_uso.CasosUsoLugar
 import com.example.mislugares.databinding.ActivityMainBinding
-import com.example.mislugares.presentacion.AdaptadorLugares
+import com.example.mislugares.presentacion.AdaptadorLugaresBD
 import com.example.mislugares.presentacion.Aplicacion
 import com.example.mislugares.presentacion.MapaActivity
 import com.google.android.material.snackbar.Snackbar
 
 private const val SOLICITUD_PERMISO_LOCALIZACION = 1
+private const val RESULTADO_PREFERENCIAS = 0
 
 class MainActivity : AppCompatActivity() {
+
 
     private lateinit var binding: ActivityMainBinding
 
     private val lugares by lazy { (application as Aplicacion).lugares }
-    private val adaptador by lazy { AdaptadorLugares(lugares) }
+    private val adaptador by lazy { (application as Aplicacion).adaptador }
     val usoLugar by lazy { CasosUsoLugar(this, lugares) }
 
     private lateinit var casosAct: com.example.mislugares.casos_uso.CasosUsoActividades
 
     private lateinit var usoLocalizacion: CasosUsoLocalizacion
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,14 +54,17 @@ class MainActivity : AppCompatActivity() {
         recycler.layoutManager = LinearLayoutManager(this)
         recycler.adapter = adaptador
 
-        adaptador.onItemClick = { pos ->
-            // Abre la pantalla de detalle del lugar seleccionado
+        adaptador.onClick = {
+            val pos = it.tag as Int
             usoLugar.mostrar(pos)
-            // (equivalente a crear un Intent y pasar "pos")
         }
 
-        // Toolbar
         setSupportActionBar(binding.toolbar)
+        binding.fab.setOnClickListener {
+            val intent = Intent(this, EdicionLugarActivity::class.java)
+            intent.putExtra("id", -1L)
+            startActivity(intent)
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -105,13 +109,15 @@ class MainActivity : AppCompatActivity() {
             .show()
     }
 
-    fun lanzarPreferencias(view: View? =null){
-        casosAct.lanzarPreferencias()
+    fun lanzarPreferencias(view: View? = null) {
+        casosAct.lanzarPreferencias(RESULTADO_PREFERENCIAS)
     }
 
     override fun onResume() {
         super.onResume()
         usoLocalizacion.activar()
+        adaptador.cursor = lugares.extraeCursor(this)
+        adaptador.notifyDataSetChanged()
     }
 
     override fun onPause() {
@@ -128,6 +134,15 @@ class MainActivity : AppCompatActivity() {
             grantResults[0] == PackageManager.PERMISSION_GRANTED
         ) {
             usoLocalizacion.permisoConcedido()
+        }
+    }
+
+    override
+    fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == RESULTADO_PREFERENCIAS) {
+            adaptador.cursor = lugares.extraeCursor(this)
+            adaptador.notifyDataSetChanged()
         }
     }
 }

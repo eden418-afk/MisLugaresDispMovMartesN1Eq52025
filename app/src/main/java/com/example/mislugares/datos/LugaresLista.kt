@@ -1,13 +1,14 @@
 package com.example.mislugares.datos
 
+import android.content.Context
 import com.example.mislugares.modelo.Lugar
 
 class LugaresLista : RepositorioLugares {
 
     private val listaLugares = mutableListOf<Lugar>()
 
-    override fun elemento(id: Int): Lugar {
-        return listaLugares[id]
+    override fun elemento(posicion: Int, contexto: Context): Lugar {
+        return listaLugares[posicion]
     }
 
     override fun añade(lugar: Lugar) {
@@ -24,7 +25,7 @@ class LugaresLista : RepositorioLugares {
         listaLugares.removeAt(id)
     }
 
-    override fun tamaño(): Int {
+    override fun tamaño(contexto: Context): Int {
         return listaLugares.size
     }
 

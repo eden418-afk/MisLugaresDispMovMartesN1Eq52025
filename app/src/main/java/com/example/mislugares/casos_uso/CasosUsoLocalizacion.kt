@@ -34,7 +34,6 @@ class CasosUsoLocalizacion(
         ultimaLocalizacion()
     }
 
-    // ------------------- Permisos -------------------
 
     fun hayPermisoLocalizacion() =
         ActivityCompat.checkSelfPermission(
@@ -54,7 +53,6 @@ class CasosUsoLocalizacion(
         }
     }
 
-    // ---------------- Última posición conocida ----------------
 
     @SuppressLint("MissingPermission")
     fun ultimaLocalizacion() {
@@ -73,7 +71,6 @@ class CasosUsoLocalizacion(
         }
     }
 
-    // ---------------- Activar / desactivar listening ----------------
 
     fun permisoConcedido() {
         ultimaLocalizacion()
@@ -100,7 +97,7 @@ class CasosUsoLocalizacion(
     fun activar()  { if (hayPermisoLocalizacion()) activarProveedores() }
     fun desactivar() { if (hayPermisoLocalizacion()) manejadorLoc.removeUpdates(this) }
 
-    // ---------------- LocationListener ----------------
+
 
     override fun onLocationChanged(location: Location) {
         actualizaMejorLocaliz(location)
@@ -111,7 +108,7 @@ class CasosUsoLocalizacion(
     override fun onProviderEnabled(provider: String)  { activarProveedores() }
     override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) { activarProveedores() }
 
-    // ---------------- Lógica de “mejor localización” ----------------
+
 
     private val DOS_MINUTOS = 2 * 60 * 1000L
 
@@ -124,7 +121,7 @@ class CasosUsoLocalizacion(
             mejorLoc = loc
             (actividad.application as Aplicacion).posicionActual =
                 GeoPunto(loc.latitude, loc.longitude)
-            adaptador.notifyDataSetChanged()   // <-- refresca la lista
+            adaptador.notifyDataSetChanged()
         }
     }
 }

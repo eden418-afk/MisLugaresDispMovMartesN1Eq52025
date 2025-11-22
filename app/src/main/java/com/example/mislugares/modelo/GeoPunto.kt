@@ -5,7 +5,7 @@ import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.math.sqrt
 
-data class GeoPunto(var longitud: Double, var latitud: Double) {
+data class GeoPunto(var latitud: Double, var longitud: Double) {
 
     companion object {
         val SIN_POSICION = GeoPunto(0.0, 0.0)

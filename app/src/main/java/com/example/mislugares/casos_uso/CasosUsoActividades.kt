@@ -10,7 +10,8 @@ class CasosUsoActividades (private val actividad: Activity) {
         actividad.startActivity(Intent(actividad, AcercaDeActivity::class.java))
     }
 
-    fun lanzarPreferencias(){
-        actividad.startActivity(Intent(actividad, PreferenciasActivity::class.java))
+    fun lanzarPreferencias(codigoResultado: Int) {
+        val intent = Intent(actividad, PreferenciasActivity::class.java)
+        actividad.startActivityForResult(intent, codigoResultado)
     }
 }

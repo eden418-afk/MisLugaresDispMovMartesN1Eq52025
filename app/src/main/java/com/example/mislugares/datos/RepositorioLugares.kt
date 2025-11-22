@@ -1,15 +1,16 @@
 package com.example.mislugares.datos
 
+import android.content.Context
 import com.example.mislugares.modelo.GeoPunto
 import com.example.mislugares.modelo.Lugar
 import com.example.mislugares.modelo.TipoLugar
 
 interface RepositorioLugares {
-    fun elemento(id: Int): Lugar          // Devuelve el elemento dado su id
+    fun elemento(posicion: Int, contexto: Context): Lugar         // Devuelve el elemento dado su id
     fun añade(lugar: Lugar)               // Añade el elemento indicado
     fun nuevo(): Int                      // Añade un elemento en blanco y devuelve su id
     fun borrar(id: Int)                   // Elimina el elemento con el id indicado
-    fun tamaño(): Int                     // Devuelve el número de elementos
+    fun tamaño(contexto: Context): Int               // Devuelve el número de elementos
     fun actualiza(id: Int, lugar: Lugar)  // Reemplaza un elemento
 
     fun añadeEjemplos() {

@@ -2,13 +2,14 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
     <uses-feature
         android:name="android.hardware.telephony"
         android:required="false" />
-    <uses-permission android:name="android.permission.CALL_PHONE"/>
+
+    <uses-permission android:name="android.permission.CALL_PHONE" />
 
     <application
         android:name=".presentacion.Aplicacion"
@@ -20,6 +21,9 @@
         android:roundIcon="@mipmap/ic_mi_icono_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.MisLugares">
+        <activity
+            android:name=".presentacion.PreferenciasActivity"
+            android:exported="false" />
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
@@ -35,15 +39,19 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".AcercaDeActivity"
+        <activity
+            android:name=".AcercaDeActivity"
             android:label="Acerca de..."
-            android:theme="@style/Theme.AppCompat.Dialog"/>
-        <activity android:name=".VistaLugarActivity"
-            android:label="Vista de lugar"/>
-        <activity android:name=".EdicionLugarActivity"
-            android:label="Edicion de lugar"/>
-        <activity android:name=".PreferenciasActivity"
-            android:label="Preferencias"/>
+            android:theme="@style/Theme.AppCompat.Dialog" />
+        <activity
+            android:name=".VistaLugarActivity"
+            android:label="Vista de lugar" />
+        <activity
+            android:name=".EdicionLugarActivity"
+            android:label="Edicion de lugar" />
+        <activity
+            android:name=".PreferenciasActivity"
+            android:label="Preferencias" />
         <activity
             android:name=".presentacion.MapaActivity"
             android:screenOrientation="portrait" />
@@ -57,7 +65,6 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />
         </provider>
-
     </application>
 
 </manifest>

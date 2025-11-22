@@ -17,6 +17,7 @@ class EdicionLugarActivity : AppCompatActivity() {
     private val usoLugar by lazy { CasosUsoLugar(this, lugares) }
 
     private var pos = 0
+    private var id = -1
     private lateinit var lugar: Lugar
     private lateinit var binding: EdicionLugarBinding
 
@@ -27,8 +28,17 @@ class EdicionLugarActivity : AppCompatActivity() {
 
         setSupportActionBar(binding.toolbar)
 
-        pos = intent.extras?.getInt("pos", 0) ?: 0
-        lugar = lugares.elemento(pos)
+        pos = intent.getIntExtra("pos", -1)
+        id = intent.getIntExtra("id", -1)
+
+        lugar = if (id != -1) {
+            lugares.elemento(id, this)
+        } else if (pos != -1) {
+            lugares.elementoPos(pos)
+        } else {
+            Lugar()
+        }
+
 
         // Spinner de tipos
         val adaptador = ArrayAdapter(
@@ -74,7 +84,7 @@ class EdicionLugarActivity : AppCompatActivity() {
         val nuevoLugar = Lugar(
             nombre = nombre.text.toString(),
             direccion = direccion.text.toString(),
-            posicion = lugar.posicion, // conserva lo que ya tuviera
+            posicion = lugar.posicion,
             tipoLugar = TipoLugar.values()[tipoLugar.selectedItemPosition],
             foto = lugar.foto,
             telefono = telefono.text.toString().toIntOrNull() ?: 0,
@@ -83,7 +93,16 @@ class EdicionLugarActivity : AppCompatActivity() {
             fecha = lugar.fecha,
             valoracion = lugar.valoracion
         )
-        usoLugar.guardar(pos, nuevoLugar)
+
+        if (id == -1) {
+            // Creamos un nuevo registro vacío
+            val nuevoId = lugares.nuevo()
+            // Lo actualizamos con los datos que el usuario introdujo
+            lugares.actualiza(nuevoId, nuevoLugar)
+        } else {
+            usoLugar.guardar(pos, id, nuevoLugar)
+        }
+
         setResult(RESULT_OK)
         finish()
     }

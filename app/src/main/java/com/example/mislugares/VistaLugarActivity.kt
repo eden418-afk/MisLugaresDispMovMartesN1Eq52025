@@ -36,6 +36,7 @@ class VistaLugarActivity : AppCompatActivity() {
     private val usoLugar by lazy { CasosUsoLugar(this, lugares) }
 
     private var pos = 0
+    private var id: Int = -1
     private lateinit var lugar: Lugar
 
     private lateinit var binding: VistaLugarBinding
@@ -45,11 +46,10 @@ class VistaLugarActivity : AppCompatActivity() {
         ActivityResultContracts.PickVisualMedia()
     ) { uri ->
         if (uri != null) {
-            // 1) Copiamos la imagen a almacenamiento privado de la app
             val localUri = copiarAAlmacenPrivado(uri)
 
-            // 2) Guardamos en el repositorio y mostramos en pantalla
-            usoLugar.ponerFoto(pos, localUri?.toString(), binding.foto)
+            usoLugar.ponerFoto(id.toLong(), localUri?.toString(), binding.foto)
+
         }
     }
 
@@ -61,7 +61,8 @@ class VistaLugarActivity : AppCompatActivity() {
         setSupportActionBar(binding.toolbar)
 
         pos = intent.extras?.getInt("pos", 0) ?: 0
-        lugar = lugares.elemento(pos)
+        id = lugares.adaptador.idPosicion(pos)
+        lugar = lugares.elementoPos(pos)
 
         binding.galeria.setOnClickListener { seleccionarFotoDesdeGaleria() }
 
@@ -76,6 +77,7 @@ class VistaLugarActivity : AppCompatActivity() {
         valoracion.rating = lugar.valoracion
         valoracion.setOnRatingBarChangeListener { _, valor, _ ->
             lugar.valoracion = valor
+            usoLugar.guardar(pos, id, lugar)
         }
 
         // Dirección
@@ -141,7 +143,7 @@ class VistaLugarActivity : AppCompatActivity() {
                 true
             }
             R.id.accion_editar    -> {
-                usoLugar.editar(pos, RESULTADO_EDITAR)
+                usoLugar.editar(pos, id, RESULTADO_EDITAR)
                 true;
             }
             R.id.accion_borrar    -> {
@@ -187,11 +189,12 @@ class VistaLugarActivity : AppCompatActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == RESULTADO_EDITAR && resultCode == RESULT_OK) {
-            lugar = lugares.elemento(pos)
+            lugar = lugares.elemento(id,this)
+            pos = lugares.adaptador.posicionId(id)
             actualizaVistas()
         }
         if (requestCode == RESULTADO_FOTO && resultCode == RESULT_OK) {
-            usoLugar.ponerFoto(pos, usoLugar.uriUltimaFoto?.toString(), binding.foto)
+            usoLugar.ponerFoto(id.toLong(), usoLugar.uriUltimaFoto?.toString(), binding.foto)
         }
     }
 
@@ -207,7 +210,7 @@ class VistaLugarActivity : AppCompatActivity() {
         ) == PackageManager.PERMISSION_GRANTED
 
         if (granted) {
-            usoLugar.llamarTelefono(lugar)   // ejecuta ACTION_CALL
+            usoLugar.llamarTelefono(lugar)
         } else {
             solicitarPermiso(
                 permiso = android.Manifest.permission.CALL_PHONE,
@@ -270,7 +273,7 @@ class VistaLugarActivity : AppCompatActivity() {
                     }
                 }
                 // Limpia el modelo y refresca la vista
-                usoLugar.ponerFoto(pos, "", binding.foto)
+                usoLugar.ponerFoto(id.toLong(), "", binding.foto)
             }
             .show()
     }

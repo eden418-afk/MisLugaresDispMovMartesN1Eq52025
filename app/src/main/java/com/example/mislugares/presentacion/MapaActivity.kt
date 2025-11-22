@@ -22,64 +22,68 @@ class MapaActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnInfoWi
 
     private lateinit var mapa: GoogleMap
     private val lugares by lazy { (application as Aplicacion).lugares }
+    private val usoLugar by lazy { com.example.mislugares.casos_uso.CasosUsoLugar(this, lugares) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.mapa)
 
-        // Obtén el fragment y pide el mapa de forma asíncrona
-        val mapFragment =
-            supportFragmentManager.findFragmentById(R.id.mapa) as SupportMapFragment
+        val mapFragment = supportFragmentManager.findFragmentById(R.id.mapa) as SupportMapFragment
         mapFragment.getMapAsync(this)
 
-        // opcional: título en la app bar
         supportActionBar?.title = getString(R.string.app_name)
     }
-
 
     override fun onMapReady(googleMap: GoogleMap) {
         mapa = googleMap
         mapa.mapType = GoogleMap.MAP_TYPE_NORMAL
 
-        // Capa "Mi ubicación" (solo si el permiso está concedido)
-        if (ActivityCompat.checkSelfPermission(
-                this, android.Manifest.permission.ACCESS_FINE_LOCATION
-            ) == android.content.pm.PackageManager.PERMISSION_GRANTED
-        ) {
-            mapa.isMyLocationEnabled = true
-            mapa.uiSettings.isZoomControlsEnabled = true
-            mapa.uiSettings.isCompassEnabled = true
-        } else {
-            // Si aún no lo has pedido en la app, simplemente no la actives aquí
-            mapa.uiSettings.isZoomControlsEnabled = true
-            mapa.uiSettings.isCompassEnabled = true
-        }
+        val permisoFine = ActivityCompat.checkSelfPermission(
+            this, android.Manifest.permission.ACCESS_FINE_LOCATION
+        ) == android.content.pm.PackageManager.PERMISSION_GRANTED
 
-        // 1) Centra la cámara en el primer lugar (si existe)
-        if (lugares.tamaño() > 0) {
-            val p = lugares.elemento(0).posicion
-            if (p != GeoPunto.SIN_POSICION) {
-                val latLng = LatLng(p.latitud, p.longitud)
-                mapa.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 12f))
+        mapa.uiSettings.isZoomControlsEnabled = true
+        mapa.uiSettings.isCompassEnabled = true
+        if (permisoFine) mapa.isMyLocationEnabled = true
+
+        // === Cargar datos desde cursor (usa _id real) ===
+        val cursor = lugares.extraeCursor(this)
+        cursor.use { c ->
+            if (c.moveToFirst()) {
+                // Centrar en el primer lugar con posición válida
+                val primero = lugares.extraeLugar(c)
+                if (primero.posicion != GeoPunto.SIN_POSICION) {
+                    val latLng = LatLng(primero.posicion.latitud, primero.posicion.longitud)
+                    mapa.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 12f))
+                }
             }
-        }
 
-        // 2) Añade un marcador por cada lugar, usando su icono escalado
-        for (i in 0 until lugares.tamaño()) {
-            val lugar = lugares.elemento(i)
-            val p = lugar.posicion
-            if (p != null && p.latitud != 0.0) {
-                val grande = BitmapFactory.decodeResource(resources, lugar.tipoLugar.recurso)
-                val icono = Bitmap.createScaledBitmap(grande, grande.width / 7, grande.height / 7, false)
+            // Reiniciar y recorrer para crear marcadores
+            c.moveToPosition(-1)
+            while (c.moveToNext()) {
+                val lugar = lugares.extraeLugar(c)
+                val pos = lugar.posicion
+                if (pos != GeoPunto.SIN_POSICION) {
+                    // Obtén el _id verdadero de la fila (columna 0 por tu esquema)
+                    val idCol = c.getColumnIndex("_id")
+                    val id = if (idCol >= 0) c.getInt(idCol) else null
 
-                val marker = mapa.addMarker(
-                    MarkerOptions()
-                        .position(LatLng(p.latitud, p.longitud))
-                        .title(lugar.nombre)
-                        .snippet(lugar.direccion)
-                        .icon(BitmapDescriptorFactory.fromBitmap(icono))
-                )
-                marker?.tag = i           // ← guarda la posición del lugar
+                    // Icono escalado (simple)
+                    val base = BitmapFactory.decodeResource(resources, lugar.tipoLugar.recurso)
+                    val icono: Bitmap = Bitmap.createScaledBitmap(
+                        base, base.width / 7, base.height / 7, true
+                    )
+
+                    val marker = mapa.addMarker(
+                        MarkerOptions()
+                            .position(LatLng(pos.latitud, pos.longitud))
+                            .title(lugar.nombre)
+                            .snippet(lugar.direccion)
+                            .icon(BitmapDescriptorFactory.fromBitmap(icono))
+                    )
+                    // Guarda el _id (no el índice) para usarlo al abrir la vista
+                    if (id != null) marker?.tag = id
+                }
             }
         }
 
@@ -87,13 +91,13 @@ class MapaActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnInfoWi
     }
 
     override fun onInfoWindowClick(marker: Marker) {
-        for (pos in 0 until lugares.tamaño()) {
-            if (lugares.elemento(pos).nombre == marker.title) {
-                val intent = Intent(this, VistaLugarActivity::class.java)
-                intent.putExtra("pos", pos)
-                startActivity(intent)
-                break
-            }
-        }
+        val id = marker.tag as? Int ?: return
+        // Si ya usas CasosUsoLugar, esto te abre la vista por _id real:
+        usoLugar.mostrar(id)
+
+        // Alternativa si prefieres lanzar la Activity directamente:
+        // val intent = Intent(this, VistaLugarActivity::class.java)
+        // intent.putExtra("id", id)   // Asegúrate de que VistaLugarActivity acepte "id"
+        // startActivity(intent)
     }
 }

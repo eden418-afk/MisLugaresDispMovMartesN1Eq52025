@@ -15,9 +15,11 @@ import androidx.core.content.FileProvider
 import com.example.mislugares.EdicionLugarActivity
 import com.example.mislugares.MainActivity
 import com.example.mislugares.VistaLugarActivity
+import com.example.mislugares.datos.LugaresDBAdapter
 import com.example.mislugares.datos.RepositorioLugares
 import com.example.mislugares.modelo.GeoPunto
 import com.example.mislugares.modelo.Lugar
+import com.example.mislugares.presentacion.Aplicacion
 import java.io.File
 import java.io.IOException
 import kotlin.jvm.java
@@ -36,31 +38,45 @@ class CasosUsoLugar(
         actividad.startActivity(i)
     }
 
-    fun borrar(id: Int){
-        if (id in 0 until lugares.tamaño()) {
-            lugares.borrar(id)
-            Toast.makeText(actividad, "Lugar eliminado", Toast.LENGTH_SHORT).show()
-            actividad.finish() // cerramos la pantalla actual
-        }
+    fun borrar(pos: Int) {
+        val id = (lugares as LugaresDBAdapter).adaptador.idPosicion(pos)
+        lugares.borrar(id)
+        actividad.finish()
     }
 
-    fun editar(pos: Int, codigoSolicitud: Int){
+    fun editar(pos: Int, id: Int, codigo: Int) {
         val i = Intent(actividad, EdicionLugarActivity::class.java)
         i.putExtra("pos", pos)
-        actividad.startActivityForResult(i, codigoSolicitud)
+        i.putExtra("id", id)
+        actividad.startActivityForResult(i, codigo)
     }
 
-    fun guardar(id: Int, nuevoLugar: Lugar){
-        lugares.actualiza(id, nuevoLugar);
+    // CORRECTO
+    fun guardar(pos: Int, id: Int, lugar: Lugar) {
+        if (id != -1) {
+            lugares.actualiza(id, lugar)
+        } else {
+            lugares.actualiza(pos, lugar)
+        }
     }
+
 
     // INTENCIONES
-    fun compartir(lugar: Lugar) = actividad.startActivity(
-        Intent(Intent.ACTION_SEND).apply {
-            type = "text/plain"
-            putExtra(Intent.EXTRA_TEXT, "${lugar.nombre} - ${lugar.url}")
-        }
-    )
+    fun compartir(lugar: Lugar) {
+        val lat = lugar.posicion.latitud
+        val lon = lugar.posicion.longitud
+        val url = "https://www.google.com/maps/?q=$lat,$lon"
+
+        val texto = "${lugar.nombre}\n${lugar.direccion}\n\nUbicación: $url"
+
+        actividad.startActivity(
+            Intent(Intent.ACTION_SEND).apply {
+                type = "text/plain"
+                putExtra(Intent.EXTRA_TEXT, texto)
+            }
+        )
+    }
+
 
     fun llamarTelefono(lugar: Lugar) {
         if (lugar.telefono == 0) return
@@ -90,10 +106,10 @@ class CasosUsoLugar(
     }
 
     /** Guarda la URI de la foto en el lugar y (opcional) la pinta en el ImageView. */
-    fun ponerFoto(pos: Int, uri: String?, imageView: ImageView? = null) {
-        val lugar = lugares.elemento(pos)
+    fun ponerFoto(id: Long, uri: String?, imageView: ImageView? = null) {
+        val lugar = lugares.elemento(id.toInt(), actividad)
         lugar.foto = uri ?: ""
-        lugares.actualiza(pos, lugar)          // << persiste en tu repositorio (memoria/BD)
+        lugares.actualiza(id.toInt(), lugar)
         imageView?.let { visualizarFoto(lugar, it) }
     }
 
@@ -134,4 +150,22 @@ class CasosUsoLugar(
             null
         }
     }
+
+    fun nuevo() {
+        val _id = lugares.nuevo()  // 🔥 Inserta un registro vacío y devuelve su ID
+
+        // Si hay posición actual, se guarda
+        val posicion = (actividad.application as Aplicacion).posicionActual
+        if (posicion != GeoPunto.SIN_POSICION) {
+            val lugar = lugares.elemento(_id, actividad)
+            lugar.posicion = posicion
+            lugares.actualiza(_id, lugar)
+        }
+
+        // Lanza la actividad de edición pasando el ID
+        val i = Intent(actividad, EdicionLugarActivity::class.java)
+        i.putExtra("id", _id)
+        actividad.startActivity(i)
+    }
+
 }
